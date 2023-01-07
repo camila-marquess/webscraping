@@ -1,8 +1,11 @@
 #%%
 
-import requests
 from bs4 import BeautifulSoup
+from datetime import datetime
+import pandas as pd
+import requests
 import json
+
 
 headers = {
     'User-Agent': ('Mozilla/5.0 (X11; Linux x86_64)'
@@ -25,7 +28,7 @@ def get_products_urls(books_list):
 
 #%%
 
-def get_responses():
+def get_products_info():
     lista = get_products_urls(BOOKS)
     productTitle = []
     productDescription = []
@@ -50,10 +53,32 @@ def get_responses():
         productDescription.append(product_description)
         productRating.append(product_rating)
         productPrice.append(price_amount)
-    return productTitle, productDescription, productRating, productPrice, 
+    return productTitle, productDescription, productRating, productPrice
         
     
-get_responses()
+get_products_info()
 
 
 # %%
+
+products_lists = list(get_products_info())
+# print(products_lists[3])
+# print(len(products_lists[2]))
+
+#%%
+
+today = datetime.now()
+print(today)
+
+#%%
+
+df = pd.DataFrame({
+    'book_title': products_lists[0],
+    'book_description': products_lists[1],
+    'book_rating': products_lists[2],
+    'book_price': products_lists[3],
+    'date': today
+    })
+
+df.head()
+
