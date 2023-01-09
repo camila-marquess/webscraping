@@ -55,30 +55,23 @@ def get_products_info():
         productPrice.append(price_amount)
     return productTitle, productDescription, productRating, productPrice
         
-    
-get_products_info()
-
 
 # %%
 
-products_lists = list(get_products_info())
-# print(products_lists[3])
-# print(len(products_lists[2]))
-
-#%%
-
-today = datetime.now()
-print(today)
-
-#%%
-
-df = pd.DataFrame({
+def transform_data_to_dataframe():
+    products_lists = list(get_products_info())
+    
+    df = pd.DataFrame({
     'book_title': products_lists[0],
     'book_description': products_lists[1],
     'book_rating': products_lists[2],
     'book_price': products_lists[3],
-    'date': today
+    'date': datetime.now()
     })
+    
+    return df
 
-df.head()
+#%%
 
+transform_data_to_dataframe()
+# %%
