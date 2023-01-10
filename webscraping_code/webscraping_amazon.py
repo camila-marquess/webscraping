@@ -56,7 +56,7 @@ def get_products_info():
     return productTitle, productDescription, productRating, productPrice
         
 
-# %%
+#%%
 
 def transform_data_to_dataframe():
     products_lists = list(get_products_info())
@@ -72,6 +72,20 @@ def transform_data_to_dataframe():
     return df
 
 #%%
+def creating_csv(path):
+    df = pd.read_csv(path)
+    
+    if df.empty:
+        return transform_data_to_dataframe().to_csv(path, index = False, sep = ',')
+        
+    else:
+        new_df = df.append(transform_data_to_dataframe()).sort_index().reset_index(drop = True)
+        return new_df.to_csv(path, index = False, sep = ',')
 
-transform_data_to_dataframe()
-# %%
+    
+
+#%%
+
+path = "path"
+
+creating_csv(path)
