@@ -6,7 +6,6 @@ import pandas as pd
 import requests
 import json
 
-
 headers = {
     'User-Agent': ('Mozilla/5.0 (X11; Linux x86_64)'
                     'AppleWebKit/537.36 (KHTML, like Gecko)'
@@ -53,25 +52,22 @@ def get_products_info():
         productDescription.append(product_description)
         productRating.append(product_rating)
         productPrice.append(price_amount)
-    return productTitle, productDescription, productRating, productPrice
         
-
+        dict_products = [{'book_title': item1, 'book_description': item2, 'book_rating': item3, 
+                                'book_price': item4} for item1, item2, item3, item4 in 
+                               zip(productTitle, productDescription, productRating, productPrice)]
+        
+    return dict_products
+        
 #%%
 
 def transform_data_to_dataframe():
-    products_lists = list(get_products_info())
-    
-    df = pd.DataFrame({
-    'book_title': products_lists[0],
-    'book_description': products_lists[1],
-    'book_rating': products_lists[2],
-    'book_price': products_lists[3],
-    'date': datetime.now()
-    })
-    
+    df = pd.DataFrame(get_products_info())
+    df['date'] = datetime.now()   
     return df
 
 #%%
+
 def creating_csv(path):
     df = pd.read_csv(path)
     
@@ -81,8 +77,6 @@ def creating_csv(path):
     else:
         new_df = df.append(transform_data_to_dataframe()).sort_index().reset_index(drop = True)
         return new_df.to_csv(path, index = False, sep = ',')
-
-    
 
 #%%
 
