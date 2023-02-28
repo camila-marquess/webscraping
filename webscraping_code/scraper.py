@@ -18,13 +18,25 @@ class ScraperAmazon:
         }
 
     def get_products_urls(self):
+        
+        """
+        Return a list of URLs.
+        
+        """
+    
         urls_list = []
         for book in self.books_list:
             url = f"https://www.amazon.com.br/dp/{''.join(book)}/"
             urls_list.append(url)
-        return urls_list
+        return urls_list    
     
     def get_products_info(self):
+        
+        """
+        Return a list containing title, description, rating and price of the product.
+        
+        """
+        
         list_books_urls = self.get_products_urls()
         productTitle = []
         productDescription = []
@@ -50,25 +62,34 @@ class ScraperAmazon:
             productRating.append(product_rating)
             productPrice.append(price_amount)
             
-            dict_products = [{'book_title': item1, 'book_description': item2, 'book_rating': item3, 
+            all_products_info = [{'book_title': item1, 'book_description': item2, 'book_rating': item3, 
                                     'book_price': item4} for item1, item2, item3, item4 in 
                                 zip(productTitle, productDescription, productRating, productPrice)]
-            
-        return dict_products
+        return all_products_info
 
 
     def transform_data_to_dataframe(self):
+        
+        """
+        Return a dataframe containing the products information.
+        
+        """
+        
         df = pd.DataFrame(self.get_products_info())
         df['date'] = datetime.now()   
         return df
 
 
-    def creating_csv(self, is_empty):        
+    def creating_csv(self, is_empty):    
+        
+        """
+        Return a CSV file containing the products dataframe.
+        
+        """    
         
         if is_empty is True:
             return self.transform_data_to_dataframe().to_csv(self.path, index = False, sep = ',')
-            
         else:
             df = pd.read_csv(self.path)
-            new_df = df.append(self.transform_data_to_dataframe()).sort_index().reset_index(drop = True)
+            new_df = pd.concat([df, self.transform_data_to_dataframe()]).sort_index().reset_index(drop = True)
             return new_df.to_csv(self.path, index = False, sep = ',')
