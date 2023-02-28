@@ -1,4 +1,3 @@
-#%%
 from bs4 import BeautifulSoup
 from datetime import datetime
 import pandas as pd
@@ -22,4 +21,3 @@ def read_dataframe():
     return df.head()
 
 read_dataframe()
-# %%
