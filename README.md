@@ -40,7 +40,7 @@ pip install pandas
 pip install requests
 ```
 
-Before running Airflow, make sure you have installed docker in your OS. If you do not, follow this steps based on your OS: ![Installing Docker Compose](https://docs.docker.com/desktop/install/windows-install/).
+Before running Airflow, make sure you have installed docker in your OS. If you do not, follow this steps based on your OS: [Installing Docker Compose](https://docs.docker.com/desktop/install/windows-install/).
 
 In order to start Airflow you have to run: 
 
