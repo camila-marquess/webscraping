@@ -92,5 +92,4 @@ class ScraperAmazon:
 
         df = pd.DataFrame(self.get_products_info())
         df["date"] = datetime.now().date()
-        #print(df.head())
         return df
