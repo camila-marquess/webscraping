@@ -34,11 +34,4 @@ with DAG(
         provide_context=True,
     )
     
-    #     process.get_products_urls()
-    #     process.get_products_info()
-    #     process.transform_data_to_dataframe()
-    #     #process.teste()
-
-    # start_process()
-    
     get_url_list_task >> get_products_info_task >> transform_data_task
