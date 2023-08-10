@@ -4,6 +4,7 @@ import requests
 import pandas as pd
 from bs4 import BeautifulSoup
 
+
 class ScraperAmazon:
     def __init__(self, books_list):
         self.books_list = books_list
@@ -52,13 +53,15 @@ class ScraperAmazon:
             if product_title:
                 product_title = product_title.text.strip()
 
-            product_description = soup.find("div", attrs={"id":"bookDescription_feature_div"})
+            product_description = soup.find(
+                "div", attrs={"id": "bookDescription_feature_div"}
+            )
             if product_description:
                 product_description = product_description.text.strip()
 
             product_rating = soup.find(
                 "span", attrs={"class": "a-icon-alt"}
-            ).text.strip()
+            )
             if product_rating:
                 product_rating = product_rating.text.strip()
 
@@ -68,12 +71,11 @@ class ScraperAmazon:
                     "class": "a-section aok-hidden twister-plus-buying-options-price-data"
                 },
             )
-            
+
             if product_price is not None:
                 for price in product_price:
-                
                     price_ = json.loads(price)
-                    price_amount = price_['desktop_buybox_group_1'][0]['priceAmount']
+                    price_amount = price_["desktop_buybox_group_1"][0]["priceAmount"]
             else:
                 price_amount = 0
 
