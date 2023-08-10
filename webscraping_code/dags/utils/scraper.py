@@ -17,51 +17,67 @@ class ScraperAmazon:
             "Accept-Language": "en-US, en;q=0.5",
         }
 
-    def get_products_urls(self):
+    def get_products_url(self, **context):
         """
         Return a list of URLs.
 
         """
 
-        urls_list = []
+        url_list = []
         for book in self.books_list:
             url = f"https://www.amazon.com.br/dp/{book}/"
-            urls_list.append(url)
-        return urls_list
+            url_list.append(url)
 
-    def get_products_info(self):
+        context["task_instance"].xcom_push(key="url_list", value=url_list)
+
+    def get_products_info(self, **context):
         """
         Return a list containing title, description, rating and price of the product.
 
         """
 
-        list_books_urls = self.get_products_urls()
+        list_books_url = context["task_instance"].xcom_pull(
+            task_ids="get_url_list_task", key="url_list"
+        )
+
         product_title_list = []
         product_description_list = []
         product_rating_list = []
         product_price_list = []
 
-        for book_url in list_books_urls:
+        for book_url in list_books_url:
             response = requests.get(book_url, headers=self.headers, timeout=10)
             soup = BeautifulSoup(response.text, "html.parser")
 
-            product_title = soup.find("span", attrs={"id": "productTitle"}).text.strip()
+            product_title = soup.find("span", attrs={"id": "productTitle"})
+            if product_title:
+                product_title = product_title.text.strip()
+
             product_description = soup.find(
-                "div", attrs={"class": "a-section a-spacing-small a-padding-small"}
-            ).text.strip()
+                "div", attrs={"id": "bookDescription_feature_div"}
+            )
+            if product_description:
+                product_description = product_description.text.strip()
+
             product_rating = soup.find(
                 "span", attrs={"class": "a-icon-alt"}
-            ).text.strip()
+            )
+            if product_rating:
+                product_rating = product_rating.text.strip()
+
             product_price = soup.find(
                 "div",
                 attrs={
                     "class": "a-section aok-hidden twister-plus-buying-options-price-data"
                 },
-            ).text.split(", ")
+            )
 
-            for price in product_price:
-                price_dict = json.loads(price)
-                price_amount = price_dict[0]["priceAmount"]
+            if product_price is not None:
+                for price in product_price:
+                    price_ = json.loads(price)
+                    price_amount = price_["desktop_buybox_group_1"][0]["priceAmount"]
+            else:
+                price_amount = 0
 
             product_title_list.append(product_title)
             product_description_list.append(product_description)
@@ -82,14 +98,19 @@ class ScraperAmazon:
                     product_price_list,
                 )
             ]
-        return all_products_info
 
-    def transform_data_to_dataframe(self):
+            context["task_instance"].xcom_push(
+                key="all_products_info", value=all_products_info
+            )
+
+    def transform_data(self, **context):
         """
         Return a dataframe containing the products information.
 
         """
+        all_products_info = context["task_instance"].xcom_pull(
+            task_ids="get_products_info_task", key="all_products_info"
+        )
 
-        df = pd.DataFrame(self.get_products_info())
+        df = pd.DataFrame(all_products_info)
         df["date"] = datetime.now().date()
-        return df

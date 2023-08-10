@@ -2,3 +2,5 @@
 **/*.pyc
 /Lib
 /pyvenv.cfg
+*.ipynb
+credentials.json
