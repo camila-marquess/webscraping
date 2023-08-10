@@ -1,6 +1,5 @@
 from datetime import datetime
 from airflow import DAG
-from airflow.models import Variable
 from airflow.operators.python_operator import PythonOperator
 from utils import scraper
 
